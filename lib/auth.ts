@@ -16,7 +16,7 @@ declare module 'next-auth' {
   }
 }
 
-const authConfig = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       id: 'credentials',
@@ -99,6 +99,4 @@ const authConfig = {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
   },
-}
-
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)
+})
