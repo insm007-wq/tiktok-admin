@@ -1,12 +1,26 @@
-import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
+'use client'
 
-export default async function HomePage() {
-  const session = await auth()
+import { useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
-  if (!session || !session.user.isAdmin) {
-    redirect('/login')
-  }
+export default function HomePage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
-  redirect('/users')
+  useEffect(() => {
+    if (status === 'loading') return
+
+    if (status === 'unauthenticated' || !session?.user?.isAdmin) {
+      router.push('/login')
+    } else {
+      router.push('/users')
+    }
+  }, [status, session, router])
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <p>로딩 중...</p>
+    </div>
+  )
 }

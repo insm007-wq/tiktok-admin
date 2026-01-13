@@ -16,13 +16,12 @@ declare module 'next-auth' {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const authConfig = {
   providers: [
     Credentials({
       id: 'credentials',
-      name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'example@example.com' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
@@ -50,7 +49,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null
           }
 
-          // 관리자만 접근 가능
           if (!user.isAdmin) {
             return null
           }
@@ -70,27 +68,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-
-  logger: {
-    error(error) {
-      if (error.name === 'CredentialsSignin') {
-        console.warn('[Auth] 로그인 실패 - 잘못된 자격 증명')
-        return
-      }
-      console.error(`[Auth Error] ${error.name}: ${error.message}`)
-      if (error.stack) {
-        console.error(error.stack)
-      }
-    },
-    warn(code) {
-      console.warn(`[Auth Warning] ${code}`)
-    },
-    debug(message, metadata) {
-      if (process.env.NODE_ENV === 'development') {
-        console.debug('[Auth Debug]', message, metadata)
-      }
-    },
-  },
 
   callbacks: {
     async jwt({ token, user }) {
@@ -116,29 +93,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
   pages: {
     signIn: '/login',
-    error: '/login',
   },
 
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
   },
+}
 
-  jwt: {
-    maxAge: 30 * 24 * 60 * 60,
-  },
-
-  cookies: {
-    sessionToken: {
-      name: 'next-auth.session-token',
-      options: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 30 * 24 * 60 * 60,
-      },
-    },
-  },
-})
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)
