@@ -4,9 +4,9 @@
   "description": "TikTok Admin - 사용자 관리 시스템",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 4000",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 4000"
   },
   "keywords": [],
   "author": "",
